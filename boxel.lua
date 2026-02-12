@@ -167,7 +167,9 @@ function SearchMenu(frame)
             ItemList:setOffset(0, 0)
         end)
 
-    function listItems(searchTerm)
+    local function listItems(searchTerm, offsetY)
+        offsetY = ItemList.offsetY
+
         -- Filter items
         local filtered_items = {}
         local items = API.GetItems()
@@ -208,12 +210,18 @@ function SearchMenu(frame)
             return a.displayName:lower() < b.displayName:lower()
         end)
 
-        local y = 0
-
         -- Display items
         ItemList:clear()
-        for _, item in ipairs(sorted_items) do
-            y = y + 1
+        local _, listHeight = ItemList:getSize()
+        local contentHeight = math.max(#sorted_items, listHeight * 4)
+        ItemList:addLabel()
+            :setText("")
+            :setPosition(1, contentHeight)
+            :setSize(1, 1)
+        local lastRow = math.min(#sorted_items, offsetY + listHeight)
+        for y = offsetY + 1, lastRow do
+            local item = sorted_items[y]
+            if not item then break end
             local text = item.displayName .. " x" .. item.count
             local button = ItemList:addButton()
                 :setText("Take")
@@ -243,6 +251,9 @@ function SearchMenu(frame)
     listItems(Search.text)
     Search:onChange("text", function(self, text)
         listItems(text)
+    end)
+    ItemList:onChange("offsetY", function(self, newOffset)
+        listItems(Search.text)
     end)
     return listItems
 end
