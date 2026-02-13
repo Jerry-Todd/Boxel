@@ -67,14 +67,7 @@ local function GetChestItemData(chest, ID)
     -- Remove all existing data for this chest from items array
     ChestsTags[ID] = {}
     for itemName, itemData in pairs(Items) do
-        local display = M.DisplayName(itemName)
-        if display[1] == "#" then
-            display = string.sub(display, 2)
-            for tag in string.gmatch(display, "([^/]+)") do
-                table.insert(ChestsTags[ID], tag)
-            end
-
-        elseif itemData.chests and itemData.chests[tostring(ID)] then
+        if itemData.chests and itemData.chests[tostring(ID)] then
             -- Subtract this chest's contribution from the total
             for slot, count in pairs(itemData.chests[tostring(ID)]) do
                 itemData.total = itemData.total - count
@@ -89,10 +82,22 @@ local function GetChestItemData(chest, ID)
         end
     end
 
+    -- Helper: collect tags from a renamed item display name that starts with '#'
+    local function AddTagsFromDisplay(display)
+        if not display or display:sub(1, 1) ~= "#" then return end
+        local tagString = display:sub(2)
+        for tag in string.gmatch(tagString, "([^/]+)") do
+            table.insert(ChestsTags[ID], tag)
+        end
+    end
+
     -- Loop through items in chest
     local list = chest.list()
-    -- print(textutils.serialiseJSON(list))
     for slot, item in pairs(list) do
+        -- Inspect detailed data to capture renamed items (for tags)
+        local detail = chest.getItemDetail(slot)
+        AddTagsFromDisplay(detail and detail.displayName)
+
         local key = item.name
         if not Items[key] then
             Items[key] = { total = 0, chests = {} }
