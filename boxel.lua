@@ -227,8 +227,7 @@ function SearchMenu(frame)
                 :setText("Take")
                 :setSize(6, 1)
                 :setPosition(1, y)
-            button:onClick(function()
-                    button:setBackground(colors.blue)
+                :onClick(function()
                     API.TakeStack(item.name)
                     listItems(Search.text)
                 end)
@@ -310,9 +309,8 @@ function ConfigMenu(frame)
     frame:addLabel()
         :setText("Config:")
         :setPosition(2, 2)
-        :setSize(40, 1)
 
-    local sort_switch = frame:addSwitch()
+    local sw = frame:addSwitch()
         :setPosition(3, 4)
         :setSize(4, 1)
 
@@ -320,35 +318,15 @@ function ConfigMenu(frame)
         :setPosition(8, 4)
         :setText("Sort only")
 
-    sort_switch.checked = Config.sortonly
+    sw.checked = Config.sortonly
 
-    sort_switch:onChange("checked", function(self, checked)
+    sw:onChange("checked", function(self, checked)
         if checked then
             Config.sortonly = true
         else
             Config.sortonly = false
         end
         API.Log("Config - Sort only ->" .. tostring(Config.sortonly))
-        SaveConfig()
-    end)
-
-    local tag_switch = frame:addSwitch()
-        :setPosition(3, 6)
-        :setSize(4, 1)
-
-    frame:addLabel()
-        :setPosition(8, 6)
-        :setText("Use tags")
-
-    tag_switch.checked = Config.usetags
-
-    tag_switch:onChange("checked", function(self, checked)
-        if checked then
-            Config.usetags = true
-        else
-            Config.usetags = false
-        end
-        API.Log("Config - Use tags ->" .. tostring(Config.usetags))
         SaveConfig()
     end)
 
@@ -413,7 +391,7 @@ parallel.waitForAny(
                     used_storage = used_storage + item.count
                 end
             end
-            stats[1]:setText("Estimated usage: " .. (math.floor((used_storage / storage) * 100) + math.floor((used_slots / slots) * 100)*2)/3 .. "%")
+            stats[1]:setText("Estimated usage: " .. math.floor((used_storage / storage) * 100) .. "%")
             stats[2]:setText("Total slots: " .. slots)
             stats[3]:setText("Used slots: " .. used_slots)
             sleep(1)
