@@ -84,7 +84,6 @@ local function GetChestItemData(chest, ID)
 
     -- Helper: collect tags from a renamed item display name that starts with '#'
     local function AddTagsFromDisplay(display)
-        if not display or display:sub(1, 1) ~= "#" then return end
         local tagString = display:sub(2)
         for tag in string.gmatch(tagString, "([^/]+)") do
             table.insert(ChestsTags[ID], tag)
@@ -96,20 +95,23 @@ local function GetChestItemData(chest, ID)
     for slot, item in pairs(list) do
         -- Inspect detailed data to capture renamed items (for tags)
         local detail = chest.getItemDetail(slot)
-        AddTagsFromDisplay(detail and detail.displayName)
-
-        local key = item.name
-        if not Items[key] then
-            Items[key] = { total = 0, chests = {} }
+        local display = detail and detail.displayName
+        if display:sub(1, 1) == "#" then
+            AddTagsFromDisplay()
+        else
+            local key = item.name
+            if not Items[key] then
+                Items[key] = { total = 0, chests = {} }
+            end
+            Items[key].total = Items[key].total + item.count
+            if not Items[key].chests[tostring(ID)] then
+                Items[key].chests[tostring(ID)] = {}
+            end
+            Items[key].chests[tostring(ID)][tostring(slot)] = item.count
         end
-        Items[key].total = Items[key].total + item.count
-        if not Items[key].chests[tostring(ID)] then
-            Items[key].chests[tostring(ID)] = {}
-        end
-        Items[key].chests[tostring(ID)][tostring(slot)] = item.count
     end
 
-    Log("Tags: "..textutils.serialiseJSON(ChestsTags[ID]))
+    Log("Tags: " .. textutils.serialiseJSON(ChestsTags[ID]))
 end
 
 -- Watch chests for changes
@@ -219,7 +221,8 @@ function M.DepositAll(Config)
                         local targetName = peripheral.getName(Chests[chestID])
                         local moved = interfacePeripheral.pushItems(targetName, tonumber(slot))
                         if moved and moved > 0 then
-                            Log('Deposited ' .. tostring(moved) .. ' ' .. itemName .. ' into tagged chest ' .. tostring(chestID))
+                            Log('Deposited ' ..
+                            tostring(moved) .. ' ' .. itemName .. ' into tagged chest ' .. tostring(chestID))
                             totalDeposited = totalDeposited + moved
                             deposited = true
                             break
@@ -234,7 +237,8 @@ function M.DepositAll(Config)
                             local chestName = peripheral.getName(chest)
                             local moved = interfacePeripheral.pushItems(chestName, tonumber(slot))
                             if moved and moved > 0 then
-                                Log('Deposited ' .. tostring(moved) .. ' ' .. itemName .. ' into untagged chest ' .. tostring(id))
+                                Log('Deposited ' ..
+                                tostring(moved) .. ' ' .. itemName .. ' into untagged chest ' .. tostring(id))
                                 totalDeposited = totalDeposited + moved
                                 deposited = true
                                 break
