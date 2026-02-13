@@ -219,6 +219,22 @@ function M.DepositAll(Config)
                         end
                     end
                 end
+                -- If no tagged chest matched, place into the first untagged chest
+                if not deposited and not Config.sortonly then
+                    for id, chest in ipairs(Chests) do
+                        local tags = ChestsTags[id]
+                        if not tags or #tags == 0 then
+                            local chestName = peripheral.getName(chest)
+                            local moved = interfacePeripheral.pushItems(chestName, tonumber(slot))
+                            if moved and moved > 0 then
+                                Log('Deposited ' .. tostring(moved) .. ' ' .. itemName .. ' into untagged chest ' .. tostring(id))
+                                totalDeposited = totalDeposited + moved
+                                deposited = true
+                                break
+                            end
+                        end
+                    end
+                end
             end
 
             -- If not deposited yet, try any available chest
