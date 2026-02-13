@@ -108,6 +108,8 @@ local function GetChestItemData(chest, ID)
         end
         Items[key].chests[tostring(ID)][tostring(slot)] = item.count
     end
+
+    Log("Tags: "..textutils.serialiseJSON(ChestsTags[ID]))
 end
 
 -- Watch chests for changes
