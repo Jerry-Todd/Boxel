@@ -29,6 +29,7 @@ function Github_Download(path, githubPath)
 end
 
 if Github_Download("boxel.lua","boxel.lua") then
+    fs.delete("boxelAPI.lua")
     print("Boxel installed")
     Write_File("startup.lua", "shell.run('boxel')")
     sleep(2)
