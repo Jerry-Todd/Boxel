@@ -30,6 +30,9 @@ end
 
 if Github_Download("boxel.lua","boxel.lua") then
     print("Boxel installed")
+    Write_File("startup.lua", "shell.run('boxel')")
+    sleep(2)
+    os.reboot()
 else
     print("Boxel failed to install")
 end
