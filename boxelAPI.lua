@@ -1,5 +1,5 @@
-
 local monitor = peripheral.find("monitor")
+local logline
 if monitor then
     monitor.setTextScale(0.5)
     monitor.clear()
@@ -18,9 +18,22 @@ end
 
 local M = {}
 
+-- Returns true when a chest has a tag that appears in the item name
+local function ChestHasMatchingTag(itemName, chestID)
+    local tags = ChestsTags[chestID]
+    if not tags then return false end
+    for _, tag in ipairs(tags) do
+        if string.find(itemName, tag, 1, true) then
+            return true
+        end
+    end
+    return false
+end
+
 Items = {}
 ItemsBasic = {}
 ChestCache = {}
+ChestsTags = {}
 Chests = { peripheral.find('minecraft:chest') }
 Log(#Chests)
 
@@ -52,8 +65,16 @@ end
 -- Read chest and store items
 local function GetChestItemData(chest, ID)
     -- Remove all existing data for this chest from items array
+    ChestsTags[ID] = {}
     for itemName, itemData in pairs(Items) do
-        if itemData.chests and itemData.chests[tostring(ID)] then
+        local display = M.DisplayName(itemName)
+        if display[1] == "#" then
+            display = string.sub(display, 2)
+            for tag in string.gmatch(display, "([^/]+)") do
+                table.insert(ChestsTags[ID], tag)
+            end
+
+        elseif itemData.chests and itemData.chests[tostring(ID)] then
             -- Subtract this chest's contribution from the total
             for slot, count in pairs(itemData.chests[tostring(ID)]) do
                 itemData.total = itemData.total - count
@@ -139,60 +160,59 @@ function M.TakeStack(name)
                 -- Use peripheral.call to transfer items
                 local taken = chest.pushItems(Interface, tonumber(slot), toTake)
                 -- local taken = peripheral.call(chestName, "pushItems", Interface, tonumber(slot), toTake)
-                Log('chest: '..chestName..' slot: '..slot..' toTake: '..toTake..' taken: '..tostring(taken))
+                Log('chest: ' .. chestName .. ' slot: ' .. slot .. ' toTake: ' .. toTake .. ' taken: ' .. tostring(taken))
                 if taken > 0 then
                     takenAmount = takenAmount + taken
                 end
             end
         end
     end
-    Log('Total taken: '..takenAmount)
+    Log('Total taken: ' .. takenAmount)
     -- Let WatchChests() handle updating the Items array when it detects the changes
     return takenAmount
 end
 
 -- Deposit all item
-function M.DepositAll(sortonly)
+function M.DepositAll(Config)
     local interfacePeripheral = peripheral.wrap(Interface)
     if not interfacePeripheral then
         Log('Interface not found')
         return 0
     end
-    
+
     local totalDeposited = 0
-    
+
     -- Keep looping until the interface is empty
     while true do
         local interfaceItems = interfacePeripheral.list()
         local hasItems = false
-        
+
         -- Check each slot in the interface
         for slot, item in pairs(interfaceItems) do
             hasItems = true
             local itemName = item.name
             local deposited = false
-            
-            -- First, try to deposit in chests that already have this item
-            if Items[itemName] and Items[itemName].chests then
+
+            -- First, try to deposit in chests that already have this item, or
+            -- when tag sorting is enabled, chests whose tags match the item name
+            if not Config.usetags and Items[itemName] and Items[itemName].chests then
                 for chestID, chestSlots in pairs(Items[itemName].chests) do
-                    local moved = interfacePeripheral.pushItems(peripheral.getName(Chests[tonumber(chestID)]), tonumber(slot))
+                    local moved = interfacePeripheral.pushItems(peripheral.getName(Chests[tonumber(chestID)]),
+                        tonumber(slot))
                     if moved and moved > 0 then
-                        Log('Deposited '..tostring(moved)..' '..itemName..' into chest '..tostring(chestID))
+                        Log('Deposited ' .. tostring(moved) .. ' ' .. itemName .. ' into chest ' .. tostring(chestID))
                         totalDeposited = totalDeposited + moved
                         deposited = true
                         break
                     end
                 end
-            end
-            
-            -- If not deposited yet, try any available chest
-            if not deposited and not sortonly then
-                for id, chest in ipairs(Chests) do
-                    local chestName = peripheral.getName(chest)
-                    if chestName then
-                        local moved = interfacePeripheral.pushItems(chestName, tonumber(slot))
+            elseif Config.usetags then
+                for chestID, _ in pairs(Chests) do
+                    if ChestHasMatchingTag(itemName, chestID) then
+                        local targetName = peripheral.getName(Chests[chestID])
+                        local moved = interfacePeripheral.pushItems(targetName, tonumber(slot))
                         if moved and moved > 0 then
-                            Log('Deposited '..tostring(moved)..' '..itemName..' into chest '..tostring(id))
+                            Log('Deposited ' .. tostring(moved) .. ' ' .. itemName .. ' into tagged chest ' .. tostring(chestID))
                             totalDeposited = totalDeposited + moved
                             deposited = true
                             break
@@ -200,20 +220,36 @@ function M.DepositAll(sortonly)
                     end
                 end
             end
-            
+
+            -- If not deposited yet, try any available chest
+            if not deposited and not Config.sortonly then
+                for id, chest in ipairs(Chests) do
+                    local chestName = peripheral.getName(chest)
+                    if chestName then
+                        local moved = interfacePeripheral.pushItems(chestName, tonumber(slot))
+                        if moved and moved > 0 then
+                            Log('Deposited ' .. tostring(moved) .. ' ' .. itemName .. ' into chest ' .. tostring(id))
+                            totalDeposited = totalDeposited + moved
+                            deposited = true
+                            break
+                        end
+                    end
+                end
+            end
+
             -- If still couldn't deposit, the storage is full
-            if not deposited and sortonly then
-                Log('Storage full! Could not deposit '..itemName)
+            if not deposited and Config.sortonly then
+                Log('Storage full! Could not deposit ' .. itemName)
             end
         end
-        
+
         -- If no items were found in the interface, we're done
-        if not hasItems or sortonly then
+        if not hasItems or Config.sortonly then
             break
         end
     end
-    
-    Log('Total deposited: '..totalDeposited)
+
+    Log('Total deposited: ' .. totalDeposited)
     return totalDeposited
 end
 
