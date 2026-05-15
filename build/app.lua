@@ -47,97 +47,82 @@ local colon_pos=string.find(display_key,":")if colon_pos then display_key=string
 )..string.sub(display_key,2)end return display_key end function i.GetItems(
 )return j end function i.GetChestCache()return l end function i.ClearCache(
 )l={}end function i.GetChests()return m end function i.Log(...)return Log(...
-)end return i end function b.install(...)function Write_File(path,p)fs.delete(
-path)local file=fs.open(path,"w")if file then file.write(p)file.close()print(
-" - "..path)return true end print("File failed to create")return false end function
-Github_Download(path,githubPath)local url="https://raw.githubusercontent.com/Jerry-Todd/Boxel/main/"
-local cacheBuster=os.epoch("utc")local file=http.get(url..githubPath.."?t="
-..cacheBuster)if file then file=file.readAll()if not Write_File(path,file)then
-return false end return true else print("Github / Cant get file: "..githubPath
-)return false end end local x,db=term.getCursorPos()local input=""while true
-do term.setCursorPos(x,db)write('Start boxel when computer starts?\nY/N/C - Yes/No/Cancel'
-)local event,au=os.pullEvent("key")input=string.lower(keys.getName(au))if input
-=='y'or input=='n'then break elseif input=='c'then print("Canceled install."
-)return end end term.clear()term.setCursorPos(1,1)if Github_Download("boxel.lua"
-,"build/app.lua")then fs.delete("boxelAPI.lua")print("Boxel installed")if input
-=='y'then print("Boxel will start automatically")Write_File("startup.lua","shell.run('boxel')"
-)end sleep(2)os.reboot()else print("Boxel failed to install")end end function
-b.main(...)dt,ed=term.getSize()if not fs.exists("basalt.lua")then print('Basalt not found, installing...'
-)shell.run("wget run https://raw.githubusercontent.com/Pyroxenium/Basalt2/main/install.lua -f"
-)end local dg=require("basalt")local dh=require("boxelAPI")cm={sortonly=false
-}local di="data.dat"local function dj()local dk=fs.open(di,"w")if not dk then
-return end dk.write(textutils.serialise(cm))dk.close()end local function dl(
-)if not fs.exists(di)then return end local dk=fs.open(di,"r")if not dk then
-return end local p=textutils.unserialise(dk.readAll())dk.close()if type(p)==
-"table"then for dm,dn in pairs(p)do cm[dm]=dn end end end dl()function dr(ds
-)ds:addLabel():setText("Boxel - "):setPosition(1,1):setSize(8,3):setForeground(
-colors.white)ds:addButton():setText("Quit"):setSize(4,1):setBackground(colors
-.red):setForeground(colors.white):setPosition(dt-3,1):onClick(function()dg.
-stop()sleep(0.1)os.exit()end)ds:addButton():setText("Reload"):setSize(6,1):
-setBackground(colors.gray):setForeground(colors.white):setPosition(dt-10,1)
-:onClick(function()dh.ClearCache()end)local du=ds:addButton():setText("Search"
+)end return i end function b.main(...)de,dp=term.getSize()if not fs.exists(
+"basalt.lua")then print('Basalt not found, installing...')shell.run("wget run https://raw.githubusercontent.com/Pyroxenium/Basalt2/main/install.lua -f"
+)end local cs=require("basalt")local ct=require("boxelAPI")cm={sortonly=false
+}local cu="data.dat"local function cv()local cw=fs.open(cu,"w")if not cw then
+return end cw.write(textutils.serialise(cm))cw.close()end local function cx(
+)if not fs.exists(cu)then return end local cw=fs.open(cu,"r")if not cw then
+return end local p=textutils.unserialise(cw.readAll())cw.close()if type(p)==
+"table"then for cy,cz in pairs(p)do cm[cy]=cz end end end cx()function dc(dd
+)dd:addLabel():setText("Boxel - "):setPosition(1,1):setSize(8,3):setForeground(
+colors.white)dd:addButton():setText("Quit"):setSize(4,1):setBackground(colors
+.red):setForeground(colors.white):setPosition(de-3,1):onClick(function()cs.
+stop()sleep(0.1)os.exit()end)dd:addButton():setText("Reload"):setSize(6,1):
+setBackground(colors.gray):setForeground(colors.white):setPosition(de-10,1)
+:onClick(function()ct.ClearCache()end)local df=dd:addButton():setText("Search"
 ):setSize(6,1):setBackground(colors.blue):setForeground(colors.white):setPosition(
-9,1)local dv=ds:addButton():setText("Info"):setSize(4,1):setBackground(colors
-.gray):setForeground(colors.white):setPosition(16,1)local dw=ds:addButton()
+9,1)local dg=dd:addButton():setText("Info"):setSize(4,1):setBackground(colors
+.gray):setForeground(colors.white):setPosition(16,1)local dh=dd:addButton()
 :setText("Config"):setSize(6,1):setBackground(colors.gray):setForeground(colors
-.white):setPosition(21,1)dv:onClick(function()dx(dy)dv:setBackground(colors
-.blue)du:setBackground(colors.gray)dw:setBackground(colors.gray)end)du:onClick(
-function()dx(dz)du:setBackground(colors.blue)dv:setBackground(colors.gray)dw
-:setBackground(colors.gray)end)dw:onClick(function()dx(ea)dw:setBackground(
-colors.blue)du:setBackground(colors.gray)dv:setBackground(colors.gray)end)ds
-:addLabel():setText(string.rep("=",dt)):setPosition(1,2):setSize(dt,1):setForeground(
-colors.white)end function ec(ds)ds:setPosition(1,3):setSize(dt,ed-2)ee=ds:addButton(
-):setText("Deposit"):setPosition(dt-9,2):setSize(9,1):setBackground(colors.
-gray):setForeground(colors.white):onClick(function()ee:setForeground(colors
-.yellow)ee:setText("Working")dh.DepositAll(cm)ee:setForeground(colors.white
-)ee:setText("Deposit")end)local ItemList=ds:addScrollFrame():setPosition(2,
-4):setSize(dt-3,ed-6):setBackground(colors.black)eb=ds:addInput():setPosition(
-2,2):setSize(dt-15,1):setForeground(colors.white):setBackground(colors.gray
+.white):setPosition(21,1)dg:onClick(function()di(dj)dg:setBackground(colors
+.blue)df:setBackground(colors.gray)dh:setBackground(colors.gray)end)df:onClick(
+function()di(dk)df:setBackground(colors.blue)dg:setBackground(colors.gray)dh
+:setBackground(colors.gray)end)dh:onClick(function()di(dl)dh:setBackground(
+colors.blue)df:setBackground(colors.gray)dg:setBackground(colors.gray)end)dd
+:addLabel():setText(string.rep("=",de)):setPosition(1,2):setSize(de,1):setForeground(
+colors.white)end function dn(dd)dd:setPosition(1,3):setSize(de,dp-2)dq=dd:addButton(
+):setText("Deposit"):setPosition(de-9,2):setSize(9,1):setBackground(colors.
+gray):setForeground(colors.white):onClick(function()dq:setForeground(colors
+.yellow)dq:setText("Working")ct.DepositAll(cm)dq:setForeground(colors.white
+)dq:setText("Deposit")end)local ItemList=dd:addScrollFrame():setPosition(2,
+4):setSize(de-3,dp-6):setBackground(colors.black)dm=dd:addInput():setPosition(
+2,2):setSize(de-15,1):setForeground(colors.white):setBackground(colors.gray
 ):setPlaceholder("search..."):setPlaceholderColor(colors.lightGray):onChange(
-"text",function(ef,text)ItemList:setOffset(0,0)end)ds:addButton():setText("X"
-):setPosition(dt-13,2):setSize(3,1):setBackground(colors.red):setForeground(
-colors.white):onClick(function()eb:setText("")ItemList:setOffset(0,0)end)local
-function eg(eh,offsetY)offsetY=ItemList.offsetY local ej={}local y=dh.GetItems(
+"text",function(dr,text)ItemList:setOffset(0,0)end)dd:addButton():setText("X"
+):setPosition(de-13,2):setSize(3,1):setBackground(colors.red):setForeground(
+colors.white):onClick(function()dm:setText("")ItemList:setOffset(0,0)end)local
+function ds(dt,offsetY)offsetY=ItemList.offsetY local dv={}local y=ct.GetItems(
 )if not y or next(y)==nil then ItemList:clear()ItemList:addLabel():setText(
 "Storage is empty"):setSize(20,1):setPosition(1,1):setForeground(colors.white
-)return end for au,ek in pairs(dh.GetItems())do local el=dh.DisplayName(au)
-if string.find(el:lower(),eh:lower())then ej[au]=ek.total end end if not ej
-or next(ej)==nil then ItemList:clear()ItemList:addLabel():setText("Nothing found"
+)return end for au,dw in pairs(ct.GetItems())do local dx=ct.DisplayName(au)
+if string.find(dx:lower(),dt:lower())then dv[au]=dw.total end end if not dv
+or next(dv)==nil then ItemList:clear()ItemList:addLabel():setText("Nothing found"
 ):setSize(20,1):setPosition(1,1):setForeground(colors.white)return end local
-eo={}for name,count in pairs(ej)do table.insert(eo,{name=name,count=count,displayName=
-dh.DisplayName(name)})end table.sort(eo,function(ax,ep)return ax.displayName
-:lower()<ep.displayName:lower()end)ItemList:clear()local er,es=ItemList:getSize(
-)local et=math.max(#eo,es*4)ItemList:addLabel():setText(""):setPosition(1,et
-):setSize(1,1)local eu=math.min(#eo,offsetY+es)for db=offsetY+1,eu do local
-t=eo[db]if not t then break end local text=t.displayName.." x"..t.count local
-ev=ItemList:addButton():setText("Take"):setSize(6,1):setPosition(1,db):onClick(
-function()dh.TakeStack(t.name)eg(eb.text)end)local ew=ItemList:addLabel():setText(
-text):setSize(#text,1):setPosition(8,db):setForeground(colors.white)if db%2
-==1 then ev:setBackground(colors.lightGray):setForeground(colors.black)ew:setForeground(
-colors.white)else ev:setBackground(colors.gray):setForeground(colors.white)
-ew:setForeground(colors.lightGray)end end end eg(eb.text)eb:onChange("text"
-,function(ef,text)eg(text)end)ItemList:onChange("offsetY",function(ef,ex)eg(
-eb.text)end)return eg end function ez(ds)ds:setPosition(1,3):setSize(dt,ed-
-2)ds:addLabel():setText("Boxel by Jerry"):setPosition(2,ed-2):setSize(40,1)
-local fa=ds:addLabel():setText("GUI powered by Basalt 2"):setSize(40,1)fa:setPosition(
-dt-#fa.text,ed-2)ds:addLabel():setText("Storage:"):setPosition(2,2):setSize(
-40,1)ds:addLabel():setText("Chest count: "..#dh.GetChests()):setPosition(3,
-4):setSize(40,1)local fb=ds:addLabel():setText("Estimated usage: Loading..."
-):setPosition(3,6):setSize(40,1)local bv=ds:addLabel():setText("Total slots: Loading..."
-):setPosition(3,8):setSize(40,1)local fc=ds:addLabel():setText("Used slots: Loading..."
-):setPosition(3,10):setSize(40,1)return{fb,bv,fc}end function fd(ds)ds:setPosition(
-1,3):setSize(dt,ed-2)ds:addLabel():setText("Config:"):setPosition(2,2)local
-fe=ds:addSwitch():setPosition(3,4):setSize(4,1)ds:addLabel():setPosition(8,
-4):setText("Sort only")fe.checked=cm.sortonly fe:onChange("checked",function(
-ef,checked)if checked then cm.sortonly=true else cm.sortonly=false end dh.Log(
-"Config - Sort only ->"..tostring(cm.sortonly))dj()end)return end function dx(
-ds)dz:setSize(0,ed-2)dy:setSize(0,ed-2)ea:setSize(0,ed-2)ds:setSize(dt,ed-2
-)end fi=dg.getMainFrame()fi:setBackground(colors.black)dr(fi)dz=fi:addFrame(
-)local eg=ec(dz)dy=fi:addFrame()local fb=ez(dy)ea=fi:addFrame()local fk=fd(
-ea)dx(dz)parallel.waitForAny(dg.run,function()while true do dh.CheckChests(
-function()eg(eb.text)end)end end,function()while true do sleep(0.25)eg(eb.text
-)end end,function()sleep(1)while true do local ci,fo,bv,fc=0,0,0,0 for u,dd
-in pairs(dh.GetChests())do bv=bv+dd.size()ci=bv*64 local list=dd.list()fc=fc
-+#dd.list()for at,t in pairs(list)do fo=fo+t.count end end fb[1]:setText("Estimated usage: "
-..math.floor((fo/ci)*100).."%")fb[2]:setText("Total slots: "..bv)fb[3]:setText(
-"Used slots: "..fc)sleep(1)end sleep(9999)end)end b.main(a)
+ea={}for name,count in pairs(dv)do table.insert(ea,{name=name,count=count,displayName=
+ct.DisplayName(name)})end table.sort(ea,function(ax,eb)return ax.displayName
+:lower()<eb.displayName:lower()end)ItemList:clear()local ed,ee=ItemList:getSize(
+)local ef=math.max(#ea,ee*4)ItemList:addLabel():setText(""):setPosition(1,ef
+):setSize(1,1)local eg=math.min(#ea,offsetY+ee)for eh=offsetY+1,eg do local
+t=ea[eh]if not t then break end local text=t.displayName.." x"..t.count local
+ei=ItemList:addButton():setText("Take"):setSize(6,1):setPosition(1,eh):onClick(
+function()ct.TakeStack(t.name)ds(dm.text)end)local ej=ItemList:addLabel():setText(
+text):setSize(#text,1):setPosition(8,eh):setForeground(colors.white)if eh%2
+==1 then ei:setBackground(colors.lightGray):setForeground(colors.black)ej:setForeground(
+colors.white)else ei:setBackground(colors.gray):setForeground(colors.white)
+ej:setForeground(colors.lightGray)end end end ds(dm.text)dm:onChange("text"
+,function(dr,text)ds(text)end)ItemList:onChange("offsetY",function(dr,ek)ds(
+dm.text)end)return ds end function em(dd)dd:setPosition(1,3):setSize(de,dp-
+2)dd:addLabel():setText("Boxel by Jerry"):setPosition(2,dp-2):setSize(40,1)
+local en=dd:addLabel():setText("GUI powered by Basalt 2"):setSize(40,1)en:setPosition(
+de-#en.text,dp-2)dd:addLabel():setText("Storage:"):setPosition(2,2):setSize(
+40,1)dd:addLabel():setText("Chest count: "..#ct.GetChests()):setPosition(3,
+4):setSize(40,1)local eo=dd:addLabel():setText("Estimated usage: Loading..."
+):setPosition(3,6):setSize(40,1)local bv=dd:addLabel():setText("Total slots: Loading..."
+):setPosition(3,8):setSize(40,1)local ep=dd:addLabel():setText("Used slots: Loading..."
+):setPosition(3,10):setSize(40,1)return{eo,bv,ep}end function eq(dd)dd:setPosition(
+1,3):setSize(de,dp-2)dd:addLabel():setText("Config:"):setPosition(2,2)local
+er=dd:addSwitch():setPosition(3,4):setSize(4,1)dd:addLabel():setPosition(8,
+4):setText("Sort only")er.checked=cm.sortonly er:onChange("checked",function(
+dr,checked)if checked then cm.sortonly=true else cm.sortonly=false end ct.Log(
+"Config - Sort only ->"..tostring(cm.sortonly))cv()end)return end function di(
+dd)dk:setSize(0,dp-2)dj:setSize(0,dp-2)dl:setSize(0,dp-2)dd:setSize(de,dp-2
+)end ev=cs.getMainFrame()ev:setBackground(colors.black)dc(ev)dk=ev:addFrame(
+)local ds=dn(dk)dj=ev:addFrame()local eo=em(dj)dl=ev:addFrame()local ex=eq(
+dl)di(dk)parallel.waitForAny(cs.run,function()while true do ct.CheckChests(
+function()ds(dm.text)end)end end,function()while true do sleep(0.25)ds(dm.text
+)end end,function()sleep(1)while true do local ci,fc,bv,ep=0,0,0,0 for u,fd
+in pairs(ct.GetChests())do bv=bv+fd.size()ci=bv*64 local list=fd.list()ep=ep
++#fd.list()for at,t in pairs(list)do fc=fc+t.count end end eo[1]:setText("Estimated usage: "
+..math.floor((fc/ci)*100).."%")eo[2]:setText("Total slots: "..bv)eo[3]:setText(
+"Used slots: "..ep)sleep(1)end sleep(9999)end)end b.main(a)
