@@ -34,24 +34,26 @@ while true do
     term.setCursorPos(x, y)
     write('Start boxel when computer starts?\nY/N/C - Yes/No/Cancel')
     local event, key = os.pullEvent("key")
-    key = keys.getName(key).lower()
-    if key == 'y' or key == 'n' then
+    input = string.lower(keys.getName(key))
+    if input == 'y' or input == 'n' then
         break
-    elseif key == 'c' then
+    elseif input == 'c' then
         print("Canceled install.")
         return
     end
-    input = key
 end
 
+term.clear()
+term.setCursorPos(1,1)
 if Github_Download("boxel.lua", "build/app.lua") then
     fs.delete("boxelAPI.lua")
     print("Boxel installed")
     if input == 'y' then
+        print("Boxel will start automatically")
         Write_File("startup.lua", "shell.run('boxel')")
     end
-
     sleep(2)
     os.reboot()
+else
     print("Boxel failed to install")
 end
