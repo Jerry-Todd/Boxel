@@ -1,17 +1,11 @@
 W, H = term.getSize()
 
--- Import Basalt
+-- Import / Download Basalt GUI Library
 if not fs.exists("basalt.lua") then
     print('Basalt not found, installing...')
     shell.run("wget run https://raw.githubusercontent.com/Pyroxenium/Basalt2/main/install.lua -f")
 end
 local basalt = require("basalt")
--- Import BoxelAPI
-if not fs.exists("boxelAPI.lua") then
-    print('Boxel API not found, installing...')
-    shell.run(
-        "wget https://raw.githubusercontent.com/Jerry-Todd/Boxel/refs/heads/main/boxelAPI.lua")
-end
 local API = require("boxelAPI")
 
 Config = {
