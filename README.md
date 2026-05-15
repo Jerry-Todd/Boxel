@@ -22,7 +22,7 @@ Perfect for managing large storage systems in ComputerCraft!
 Run this command on your ComputerCraft computer:
 
 ```
-wget run https://raw.githubusercontent.com/Jerry-Todd/Boxel/refs/heads/main/install.lua
+wget run https://raw.githubusercontent.com/Jerry-Todd/Boxel/refs/heads/main/build/install.lua
 ```
 
 The installer will:
